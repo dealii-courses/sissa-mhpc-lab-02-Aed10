@@ -1,0 +1,100 @@
+name: Autograding Tests
+'on':
+- workflow_dispatch
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Indent
+      id: indent
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Indent
+        setup-command: ''
+        command: ".scripts/dr.sh .scripts/check_indentation.sh"
+        timeout: 10
+        max-score: 1
+    - name: Build
+      id: build
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Build
+        setup-command: ''
+        command: .scripts/dr.sh "mkdir build; cd build; cmake -GNinja ..; ninja"
+        timeout: 10
+        max-score: 5
+    - name: Step1 - Mark1
+      id: step1-mark1
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Step1 - Mark1
+        setup-command: ''
+        command: .scripts/dr.sh "cd build; ./gtest --gtest_filter=Step1.Mark1"
+        timeout: 10
+        max-score: 2
+    - name: Step1 - Mark2
+      id: step1-mark2
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Step1 - Mark2
+        setup-command: ''
+        command: .scripts/dr.sh "cd build; ./gtest --gtest_filter=Step1.Mark2"
+        timeout: 10
+        max-score: 2
+    - name: Step1 - Mark3
+      id: step1-mark3
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Step1 - Mark3
+        setup-command: ''
+        command: .scripts/dr.sh "cd build; ./gtest --gtest_filter=Step1.Mark3"
+        timeout: 10
+        max-score: 2
+    - name: Step1 - Mark4
+      id: step1-mark4
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Step1 - Mark4
+        setup-command: ''
+        command: .scripts/dr.sh "cd build; ./gtest --gtest_filter=Step1.Mark4"
+        timeout: 10
+        max-score: 2
+    - name: Step1 - Mark5
+      id: step1-mark5
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Step1 - Mark5
+        setup-command: ''
+        command: .scripts/dr.sh "cd build; ./gtest --gtest_filter=Step1.Mark5"
+        timeout: 10
+        max-score: 2
+    - name: Step1 - Mark6
+      id: step1-mark6
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Step1 - Mark6
+        setup-command: ''
+        command: .scripts/dr.sh "cd build; ./gtest --gtest_filter=Step1.Mark6"
+        timeout: 10
+        max-score: 2
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        INDENT_RESULTS: "${{steps.indent.outputs.result}}"
+        BUILD_RESULTS: "${{steps.build.outputs.result}}"
+        STEP1-MARK1_RESULTS: "${{steps.step1-mark1.outputs.result}}"
+        STEP1-MARK2_RESULTS: "${{steps.step1-mark2.outputs.result}}"
+        STEP1-MARK3_RESULTS: "${{steps.step1-mark3.outputs.result}}"
+        STEP1-MARK4_RESULTS: "${{steps.step1-mark4.outputs.result}}"
+        STEP1-MARK5_RESULTS: "${{steps.step1-mark5.outputs.result}}"
+        STEP1-MARK6_RESULTS: "${{steps.step1-mark6.outputs.result}}"
+      with:
+        runners: indent,build,step1-mark1,step1-mark2,step1-mark3,step1-mark4,step1-mark5,step1-mark6
